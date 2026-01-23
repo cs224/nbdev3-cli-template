@@ -36,6 +36,7 @@ If any outputs or docs are not as expected, create a timestamped TODO file:
 - Demonstrate key functions immediately after defining them with a small example or check.
 - Keep imports in their own cell (avoid mixing imports and computation in one cell) to reduce doc-build execution surprises.
 - Keep documentation, tests, and examples near the code they explain.
+- You cannot split a single Python function/class definition across multiple cells; instead, refactor long functions into smaller helpers and describe each helper in its own markdown+code section.
 
 ## Permissions policy
 
