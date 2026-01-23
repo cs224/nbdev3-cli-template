@@ -25,10 +25,13 @@ uv python install 3.12 --default
 
 ## Generate a new project
 
+From the GitHub repo (no local checkout required):
+
 ```bash
-uvx copier copy template_nbdev2 <dest>
+uvx copier copy --from git+https://github.com/cs224/nbdev2-cli-template <dest>
 ```
 
+The local-path examples below only work **after** you clone or check out this template repository on disk.
 For local usage in this repo, you can also run:
 
 ```bash
