@@ -1,0 +1,6 @@
+website:
+  sidebar:
+    contents:
+      - index.ipynb
+      - 00_cli.ipynb
+      - 99_tests.ipynb

@@ -1,0 +1,43 @@
+# Copier template config
+_subdirectory: template
+_templates_suffix: ""
+
+project_name:
+  type: str
+  help: Project/repo name (kebab-case) and distribution name
+  default: hello-cli
+
+package_name:
+  type: str
+  help: Python package import name (snake_case)
+  default: "{{ project_name | replace('-', '_') }}"
+
+cli_name:
+  type: str
+  help: Console script name (kebab-case)
+  default: "{{ project_name }}"
+
+description:
+  type: str
+  help: Short project description
+  default: "Hello-world CLI built with nbdev2 + uv"
+
+author_name:
+  type: str
+  help: Author name
+  default: "Your Name"
+
+author_email:
+  type: str
+  help: Author email
+  default: "you@example.com"
+
+repo_slug:
+  type: str
+  help: GitHub repo slug (org/repo)
+  default: "your-org/{{ project_name }}"
+
+min_python:
+  type: str
+  help: Minimum supported Python version
+  default: "3.12"
