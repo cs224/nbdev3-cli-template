@@ -29,6 +29,14 @@ If any outputs or docs are not as expected, create a timestamped TODO file:
 - In notebooks, prefer absolute imports (e.g., `from {{ package_name }}.module import fn`).
 - Relative imports can cause nbdev export errors; nbdev2 rewrites absolute imports to relative ones during export, so this is a practical rule based on the import‑rewrite mechanism (not a hard prohibition).
 
+## Literate programming best practices
+
+- Lead each notebook with a short introduction that states scope and outlines sections; use clear markdown headings for structure.
+- Keep code cells small and focused, and add a short markdown explanation before each code block.
+- Demonstrate key functions immediately after defining them with a small example or check.
+- Keep imports in their own cell (avoid mixing imports and computation in one cell) to reduce doc-build execution surprises.
+- Keep documentation, tests, and examples near the code they explain.
+
 ## Permissions policy
 
 - Pre-authorized to run normal workflow commands with escalated permissions when required (network or IPC): `make sync`, `uv sync`, `uv run ...`, `make test`, `make docs`.
@@ -38,3 +46,9 @@ If any outputs or docs are not as expected, create a timestamped TODO file:
 
 Plain language: You have already approved network + IPC for the standard workflow, so the assistant should proceed without asking.
 The escalated flag is just the technical switch needed by the sandbox to run those commands; it does not mean new approval is required each time.
+
+## Logging
+
+- Use the standard `logging` module for all runtime output (avoid bare `print` in library code).
+- Initialize logging through a shared helper and pass loggers into worker functions.
+- Log key milestones, counts, and warnings with context that helps debugging.
