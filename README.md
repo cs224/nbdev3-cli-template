@@ -28,7 +28,7 @@ uv python install 3.12 --default
 From the GitHub repo (no local checkout required):
 
 ```bash
-uvx copier copy --from git+https://github.com/cs224/nbdev2-cli-template <dest>
+uvx copier copy "gh:cs224/nbdev2-cli-template" <dest>
 ```
 
 The local-path examples below only work **after** you clone or check out this template repository on disk.
