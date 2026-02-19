@@ -1,6 +1,6 @@
-# nbdev2 CLI Copier Template
+# nbdev3 CLI Copier Template
 
-This is a Copier template for a minimal nbdev2 project with a Hello World CLI.
+This is a Copier template for a minimal nbdev3 project with a Hello World CLI.
 
 ## Install uv (one-time setup)
 
@@ -99,5 +99,5 @@ bash nbdev2-cli-template/smoke_test.sh
 
 ## Notes
 
-- This template uses nbdev2 notebooks in `nbs/` and exports Python modules via `nbdev_export`.
-- Avoid `nbdev_prepare`; it overwrites `README.md`.
+- This template uses nbdev3 notebooks in `nbs/` and exports Python modules via `nbdev-export`.
+- Avoid `nbdev-prepare`; it overwrites `README.md`.

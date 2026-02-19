@@ -1,4 +1,4 @@
-# Makefile for an nbdev2 + uv project
+# Makefile for an nbdev3 + uv project
 
 SHELL := /bin/bash
 .SHELLFLAGS := -eu -o pipefail -c
@@ -17,12 +17,12 @@ CLI_NB   ?= $(NBS_DIR)/00_cli.ipynb
 help:
 	@echo "Targets:"
 	@echo "  make sync       - Create/update .venv from pyproject.toml"
-	@echo "  make export     - nbdev_export (generate package modules)"
-	@echo "  make nbdev_test - nbdev_test (notebook-based tests)"
+	@echo "  make export     - nbdev-export (generate package modules)"
+	@echo "  make nbdev_test - nbdev-test (notebook-based tests)"
 	@echo "  make pytest     - pytest (standard tests)"
 	@echo "  make test       - nbdev_test + pytest"
-	@echo "  make clean      - nbdev_clean"
-	@echo "  make clean-nbs  - nbdev_clean --clear_all (strip outputs)"
+	@echo "  make clean      - nbdev-clean"
+	@echo "  make clean-nbs  - nbdev-clean --clear_all (strip outputs)"
 	@echo "  make docs       - proc + quarto render (requires Quarto)"
 	@echo "  make preview    - quarto preview (live server) from within _proc"
 	@echo "  make render-core - render only $(CLI_NB) from within _proc"
@@ -38,13 +38,13 @@ sync:
 
 ## Step 1: export library code from notebooks
 export:
-	@echo "==> nbdev_export"
-	$(UVRUN) nbdev_export
+	@echo "==> nbdev-export"
+	$(UVRUN) nbdev-export
 
 ## Step 2a: nbdev tests
 nbdev_test:
-	@echo "==> nbdev_test"
-	$(UVRUN) nbdev_test
+	@echo "==> nbdev-test"
+	$(UVRUN) nbdev-test
 
 ## Step 2b: pytest suite
 pytest:
@@ -57,19 +57,19 @@ test: nbdev_test pytest
 
 ## Step 3: nbdev clean
 clean:
-	@echo "==> nbdev_clean"
-	$(UVRUN) nbdev_clean
+	@echo "==> nbdev-clean"
+	$(UVRUN) nbdev-clean
 
 clean-nbs:
-	@echo "==> nbdev_clean --clear_all"
-	$(UVRUN) nbdev_clean --clear_all
+	@echo "==> nbdev-clean --clear_all"
+	$(UVRUN) nbdev-clean --clear_all
 
 ## Step 4: preprocess notebooks for docs (generates/updates _proc)
 proc:
 	@echo "==> execute notebooks inside $(NBS_DIR)"
 	$(UVRUN) jupyter nbconvert --to notebook --inplace --execute --ExecutePreprocessor.timeout=600 $(NBS_DIR)/*.ipynb
-	@echo "==> nbdev_proc_nbs"
-	$(UVRUN) nbdev_proc_nbs
+	@echo "==> nbdev-proc-nbs"
+	$(UVRUN) nbdev-proc-nbs
 
 ## Step 5: render documentation (FULL SITE)
 render: proc

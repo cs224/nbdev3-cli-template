@@ -20,7 +20,7 @@ cli_name:
 description:
   type: str
   help: Short project description
-  default: "Hello-world CLI built with nbdev2 + uv"
+  default: "Hello-world CLI built with nbdev3 + uv"
 
 author_name:
   type: str
