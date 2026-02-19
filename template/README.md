@@ -1,75 +1,140 @@
 # {{ project_name }}
 
-{{ description }}
+{{ description }}.
+
+Dual-use project:
+- CLI tool for routine use (`uv run {{ cli_name }} ...`)
+- Notebook-first nbdev project where notebooks in `nbs/` are the source of truth and exported code is generated in `{{ package_name }}/`
+
+## What this project does
+
+- Provides a tiny `argparse`-based hello-world CLI.
+- Demonstrates notebook-first development with nbdev export/test/docs flow.
+- Keeps pytest and notebook tests side-by-side.
+
+## Entry points
+
+- CLI:
+  ```bash
+  uv run {{ cli_name }} --help
+  ```
+- Notebook landing page: `nbs/index.ipynb`
+- CLI notebook: `nbs/00_cli.ipynb`
+- Notebook tests: `nbs/99_tests.ipynb`
 
 ## Quickstart
 
 ```bash
+cd {{ project_name }}
 make sync
+
 uv run {{ cli_name }}
 uv run {{ cli_name }} --name Alice
 uv run python -m {{ package_name }} --name Alice
 ```
 
-## Development
+## Developer workflow
+
+### 1) Bootstrap tooling
 
 ```bash
+cd {{ project_name }}
+uv sync --group dev
+```
+
+### 2) Run the standard workflow
+
+```bash
+cd {{ project_name }}
+make sync
 make export
+uv run {{ cli_name }}
 make test
+make docs
+make nbs_md
 ```
 
-## nbdev workflow (cheat sheet)
+### 3) Notebook-flow verification (required)
+
+Treat verification as two passes:
+- Pass A: flow/structure integrity (Define -> use -> verify ordering and proximity)
+- Pass B: semantic integrity (prose/examples/assertions match current behavior)
+
+This repo includes a local skill for this:
+- `.agents/skills/notebook-flow-verification/`
+
+## Tests
+
+Two complementary test systems are kept separate:
 
 ```bash
-make sync                           # install deps (incl. nbdev)
-uv run nbdev-install-hooks          # install git/nbdev pre-commit hooks (optional, see below)
-uv run nbdev-prepare                # export, strip outputs, run tests; **WILL OVERWRITE YOUR README.md**!!
-make export                         # only export notebooks -> python
-make nbdev_test                     # run tests in notebooks
+make nbdev_test   # notebook-based tests
+make pytest       # standard Python tests
+make test         # quality gate: nbdev_test + pytest
 ```
 
-- `pyproject.toml` configures lib name, paths, version, repo slug.
-- Code cells use `#| export` to mark what becomes part of the module.
-- Docs can be built with `make docs` (renders into `_proc/_docs`).
+Convenience aliases:
+- `make test-nb` (nbdev only)
+- `make test-fast` (pytest only)
 
-## Publishing docs (local -> GitHub Pages)
+## Docs
 
-- Build locally: `UV_OFFLINE=1 make docs` (renders into `_proc/_docs`).
-- Publish explicitly: `uv sync --group dev` (first time to install `ghp-import`), then `make publish`. This runs `ghp-import -n -p -f _proc/_docs` to push the rendered site to the `gh-pages` branch.
-- One-time repo setup after pushing to GitHub: Settings -> Pages -> **Source: Deploy from a branch**, Branch: `gh-pages` / folder `/(root)`. The site will be served at `https://{{ repo_slug.split('/')[0] }}.github.io/{{ project_name }}`.
+Docs are rendered with Quarto from preprocessed notebooks in `_proc/`.
 
-### What does `uv run nbdev-install-hooks` do? Can I work without it?
+- `make docs` renders docs without executing notebooks (uses saved outputs).
+- `make docs-refresh-live` executes notebooks, then renders docs.
+- `make preview` starts local Quarto preview from `_proc/`.
+- `make render-one RENDER_ONE=00_cli.ipynb` renders one page inside `_proc/`.
 
-- The command installs git/nbdev pre-commit hooks that automatically: export notebooks to code (`nbdev-export`), strip outputs, and fail the commit if notebooks aren't cleaned. It's convenient automation but optional.
-- To work without hooks: skip `nbdev-install-hooks`. Instead, run these manually before pushing/committing:
+## Notebook markdown mirror
+
+- `nbs_md/` stores markdown exports of tracked notebooks from `nbs/`.
+- Regenerate with:
   ```bash
-  make export             # sync notebooks -> python
-  make nbdev_test         # optional: run nbdev tests
-  uv run nbdev-prepare    # full cycle: export, clean outputs, run tests; **WILL OVERWRITE YOUR README.md**!!
+  make nbs_md
   ```
-  Ensure you commit both the notebook and the exported python files under `{{ package_name }}/`.
+- This is useful for notebook-flow review and lightweight diffs of narrative changes.
 
-## Tests (pytest vs nbdev_test)
+## CTX integration (optional)
 
-- `make pytest` runs the standard `pytest` suite in `tests/`. This verifies CLI behavior using normal Python unit tests.
-- `make nbdev_test` runs nbdev's notebook tests. It **executes notebooks in `nbs/`** in order (fresh kernel per notebook) and treats any exceptions or failed `assert` statements in code cells as test failures. This is why many projects keep a `99_tests.ipynb` notebook with assertions.
-  - “Cells marked for testing” means code cells that contain test logic (usually `assert` statements) in notebooks. You don’t need a special filename, but it’s common to group tests in a dedicated notebook.
-  - “Other nbdev test hooks” means nbdev respects notebook test flags. Cells tagged with `#| notest` are skipped by `nbdev-test`. This lets you keep demo or expensive cells in notebooks without running them as tests.
+This project includes optional CTX integration for building notebook-derived context bundles.
 
+- Config file: `ctx.yaml`
+- Installer script: `scripts/install_ctx.sh`
+- Make targets:
+  - `make ctx-check` verifies `ctx` is available (local `./.bin/ctx` or PATH)
+  - `make ctx-install` installs `ctx` into `./.bin` (network required)
+  - `make ctx` runs notebook markdown export + CTX build
 
-## Notebook (nbdev + nbclassic)
+## Publishing docs
+
+```bash
+cd {{ project_name }}
+make publish
+```
+
+`make publish` runs:
+- `make test`
+- `make docs-refresh-live`
+- `make nbs_md`
+
+Then it publishes `_proc/_docs` to `gh-pages` using `ghp-import`.
+
+## Notebook usage (nbclassic)
 
 - Notebook: `nbs/index.ipynb`
-- Ways to launch nbclassic with the right deps:
-  1) No install, one-off via uvx:  
-     `uvx --with notebook --with nbclassic jupyter nbclassic nbs/index.ipynb`
-  2) Project deps:
-     ```bash
-     uv sync
-     uv run jupyter nbclassic nbs/index.ipynb
-     ```
+- One-off launch:
+  ```bash
+  uvx --with notebook --with nbclassic jupyter nbclassic nbs/index.ipynb
+  ```
+- Using project deps:
+  ```bash
+  uv sync --group dev
+  uv run jupyter nbclassic nbs/index.ipynb
+  ```
 
 ## Notes
 
 - This project uses nbdev3 notebooks in `nbs/`.
-- Avoid `nbdev-prepare`; it overwrites `README.md`.
+- Avoid `uv run nbdev-prepare`; it can overwrite `README.md`.
+- `pyproject.toml` is the canonical config (project metadata + `[tool.nbdev]`).
