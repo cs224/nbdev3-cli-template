@@ -28,14 +28,14 @@ uv python install 3.12 --default
 From the GitHub repo (no local checkout required):
 
 ```bash
-uvx copier copy "gh:cs224/nbdev2-cli-template" <dest>
+uvx copier copy "gh:cs224/nbdev3-cli-template" <dest>
 ```
 
 The local-path examples below only work **after** you clone or check out this template repository on disk.
 For local usage in this repo, you can also run:
 
 ```bash
-uvx copier copy ./nbdev2-cli-template <dest>
+uvx copier copy ./nbdev3-cli-template <dest>
 ```
 
 ### Passing parameters on the command line
@@ -44,7 +44,7 @@ Use `-d KEY=VALUE` to override defaults (repeatable). Missing values fall back t
 
 ```bash
 # override a few values; the rest use defaults
-uvx copier copy ./nbdev2-cli-template <dest> \
+uvx copier copy ./nbdev3-cli-template <dest> \
   -d project_name=my-cli \
   -d package_name=my_cli \
   -d cli_name=my-cli
@@ -53,7 +53,7 @@ uvx copier copy ./nbdev2-cli-template <dest> \
 To provide all parameters explicitly:
 
 ```bash
-uvx copier copy ./nbdev2-cli-template <dest> \
+uvx copier copy ./nbdev3-cli-template <dest> \
   -d project_name=my-cli \
   -d package_name=my_cli \
   -d cli_name=my-cli \
@@ -68,13 +68,13 @@ If you prefer a persistent install, you can also do:
 
 ```bash
 uv tool install copier
-copier copy ./nbdev2-cli-template <dest>
+copier copy ./nbdev3-cli-template <dest>
 ```
 
 `uv tool install` installs a tool into a **global, user-level uv tools environment** (not the current project’s `.venv`). This makes the command available on your PATH across projects.
 e.g.
 ```bash
-copier copy --defaults ./nbdev2-cli-template ./_tmp_hello_project
+copier copy --defaults ./nbdev3-cli-template ./_tmp_hello_project
 ```
 
 ## Run the CLI
@@ -94,7 +94,7 @@ uv run pytest
 ## Smoke test (template repo)
 
 ```bash
-bash nbdev2-cli-template/smoke_test.sh
+bash nbdev3-cli-template/smoke_test.sh
 ```
 
 ## Notes
