@@ -1,0 +1,2 @@
+# Remove files from nbdev-new baseline that are replaced by template-specific notebooks.
+nbs/00_core.ipynb

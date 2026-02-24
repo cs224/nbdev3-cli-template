@@ -1,6 +1,15 @@
 # Copier template config
-_subdirectory: template
+_subdirectory: "{{ 'template-operation' if generation_mode == 'operation' else 'template-state' }}"
 _templates_suffix: ""
+_tasks:
+  - command: ["bash", ".copier-ops/bootstrap.sh"]
+    when: "{{ generation_mode == 'operation' and _copier_operation == 'copy' }}"
+  - command: ["bash", ".copier-ops/run_nbdev_new.sh"]
+    when: "{{ generation_mode == 'operation' and _copier_operation == 'copy' }}"
+  - command: ["bash", ".copier-ops/apply_overlays.sh"]
+    when: "{{ generation_mode == 'operation' and _copier_operation == 'copy' }}"
+  - command: ["rm", "-rf", ".copier-ops"]
+    when: "{{ _copier_operation == 'copy' }}"
 
 project_name:
   type: str
@@ -41,3 +50,17 @@ min_python:
   type: str
   help: Minimum supported Python version
   default: "3.12"
+
+generation_mode:
+  type: str
+  help: Project generation strategy
+  choices:
+    - state
+    - operation
+  default: state
+
+nbdev_version:
+  type: str
+  help: nbdev version used by operation mode bootstrap
+  default: "3.0.12"
+  when: "{{ generation_mode == 'operation' }}"

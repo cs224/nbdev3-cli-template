@@ -3,23 +3,35 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 START_DIR="$(pwd)"
-OUT_DIR="$START_DIR/_tmp_hello_project"
+STATE_OUT_DIR="$START_DIR/_tmp_hello_project_state"
+OP_OUT_DIR="$START_DIR/_tmp_hello_project_operation"
 
-rm -rf "$OUT_DIR"
+rm -rf "$STATE_OUT_DIR" "$OP_OUT_DIR"
 
-uvx copier copy --defaults "$ROOT_DIR" "$OUT_DIR"
+smoke_one() {
+  local mode="$1"
+  local out_dir="$2"
 
-cd "$OUT_DIR"
+  uvx copier copy --trust --defaults "$ROOT_DIR" "$out_dir" -d generation_mode="$mode"
 
-rm -f hello_cli/cli.py
+  cd "$out_dir"
 
-make sync
-make export
-uv run hello-cli
-uv run hello-cli --name Alice
-uv run python -m hello_cli --name Alice
-make test
-make docs
+  rm -f hello_cli/cli.py
 
-echo "Smoke test complete: $OUT_DIR"
-echo "Open in your browser: $OUT_DIR/_proc/_docs/index.html"
+  make sync
+  make export
+  uv run hello-cli
+  uv run hello-cli --name Alice
+  uv run python -m hello_cli --name Alice
+  make test
+  make docs
+}
+
+smoke_one "state" "$STATE_OUT_DIR"
+cd "$START_DIR"
+smoke_one "operation" "$OP_OUT_DIR"
+
+echo "Smoke test complete:"
+echo "- state: $STATE_OUT_DIR"
+echo "- operation: $OP_OUT_DIR"
+echo "Open in your browser: $STATE_OUT_DIR/_proc/_docs/index.html"
